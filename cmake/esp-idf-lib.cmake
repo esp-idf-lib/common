@@ -24,7 +24,13 @@ set(ESP_IDF_LIB_FLAGS
     -Wunused-function
     -Wreturn-type
 )
-target_compile_options(${COMPONENT_LIB} PRIVATE
-    ${ESP_IDF_LIB_FLAGS}
-    ${ESP_IDF_LIB_CI_FLAGS}
-)
+
+# When COMPONENT_LIB is INTERFACE_LIBRARY, or a header-only library, do not
+# set the flags.
+get_target_property(COMPONENT_TYPE ${COMPONENT_LIB} TYPE)
+if(NOT COMPONENT_TYPE STREQUAL "INTERFACE_LIBRARY")
+    target_compile_options(${COMPONENT_LIB} PRIVATE
+        ${ESP_IDF_LIB_FLAGS}
+        ${ESP_IDF_LIB_CI_FLAGS}
+    )
+endif()
